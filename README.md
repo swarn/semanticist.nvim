@@ -4,10 +4,20 @@ Control how neovim uses LSP semantic tokens to apply highlights. This simply
 takes the code from neovim/neovim#21804, with almost no changes, and makes it
 available as a plugin.
 
-> **Warning**
-> This is experimental, and shouldn't be used by anyone, ever.
+Because it duplicates the semantic token engine from the in-development neovim
+9, `semanticist` works with the current release (8.2).
 
-## An example with clangd:
+> **Warning**
+>
+> This is experimental, unstable, etc.
+
+
+## Install
+
+This only provides a module, so no `require('semanticist').setup()` is needed.
+
+
+## An example of use semanticist with clangd:
 
 Here are the types of semantic tokens sent by clangd:
 
@@ -64,7 +74,7 @@ local clangd_cb = function(bufnr, ns, token)
   vim.api.nvim_buf_set_extmark(bufnr, ns, token.line, token.start_col, {
     hl_group = hl_group,
     end_col = token.end_col,
-    priority = vim.highlight.priorities.semantic_tokens,
+    priority = vim.highlight.priorities.treesitter + 25,
     strict = false,
   })
 end
@@ -77,7 +87,8 @@ Then, I need to:
 
 2. Start a `sematicist` highlighter for every buffer that server attaches to.
 
-3. Disable the built-in semantic highlighter for those buffers.
+3. If using neovim nightly (9.0), disable the built-in semantic highlighter for
+   those buffers.
 
 With lspconfig, that looks like:
 ``` lua
@@ -88,6 +99,9 @@ require('lspconfig')['clangd'].setup{
   on_attach = function(client, buffer)
     on_attach(client, buffer)
     require("semanticist").start(buffer, client.id, { hl_cb = clangd_cb })
+
+    -- Disable the built-in token engine, if it exists.
+    if not vim.lsp.semantic_tokens then return end
     vim.defer_fn(function() vim.lsp.semantic_tokens.stop(buffer, client.id) end, 50)
   end,
 }
