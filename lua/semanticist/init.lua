@@ -138,7 +138,7 @@ function STHighlighter.new(bufnr)
   local self = setmetatable({}, { __index = STHighlighter })
 
   self.bufnr = bufnr
-  self.augroup = api.nvim_create_augroup('vim_lsp_semantic_tokens:' .. bufnr, { clear = true })
+  self.augroup = api.nvim_create_augroup('semanticist:' .. bufnr, { clear = true })
   self.client_state = {}
 
   STHighlighter.active[bufnr] = self
@@ -203,7 +203,7 @@ function STHighlighter:attach(client_id, hl_cb)
   local state = self.client_state[client_id]
   if not state then
     state = {
-      namespace = api.nvim_create_namespace('vim_lsp_semantic_tokens:' .. client_id),
+      namespace = api.nvim_create_namespace('semanticist:' .. client_id),
       hl_cb = hl_cb,
       active_request = {},
       current_result = {},
@@ -696,7 +696,7 @@ end
 --- the BufWinEnter event should take care of it next time it's displayed.
 ---
 ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-current/#semanticTokens_refreshRequest
-handlers['workspace/semanticTokens/refresh'] = function(err, _, ctx)
+function M.handler(err, _, ctx)
   if err then
     return vim.NIL
   end
@@ -715,7 +715,7 @@ handlers['workspace/semanticTokens/refresh'] = function(err, _, ctx)
   return vim.NIL
 end
 
-local namespace = api.nvim_create_namespace('vim_lsp_semantic_tokens')
+local namespace = api.nvim_create_namespace('semanticist')
 api.nvim_set_decoration_provider(namespace, {
   on_win = function(_, _, bufnr, topline, botline)
     local highlighter = STHighlighter.active[bufnr]
