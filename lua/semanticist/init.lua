@@ -663,6 +663,25 @@ function M.get_at_pos(bufnr, row, col)
   return tokens
 end
 
+--- Print semantic token type and modifiers at the given position.
+--- If called without arguments, use the position under the cursor.
+---
+---@param bufnr number|nil Buffer number (0 for current buffer, default)
+---@param row number|nil Position row (default cursor position)
+---@param col number|nil Position column (default cursor position)
+function M.inspect(bufnr, row, col)
+  local tokens = M.get_at_pos(bufnr, row, col)
+
+  if not tokens or vim.tbl_isempty(tokens) then
+    print("No tokens found")
+    return
+  end
+
+  for _, token in ipairs(tokens) do
+    print(token.type .. ':', table.concat(token.modifiers, ", "))
+  end
+end
+
 --- Force a refresh of all semantic tokens
 ---
 --- Only has an effect if the buffer is currently active for semantic token

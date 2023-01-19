@@ -17,7 +17,26 @@ Because it duplicates the semantic token engine from the in-development neovim
 This only provides a module, so no `require('semanticist').setup()` is needed.
 
 
-## An example of use semanticist with clangd:
+## Use
+
+Three steps are required:
+
+1. Register a handler for `workspace/semanticTokens/refresh` for a server you
+   want to customize.
+
+2. Start a `sematicist` highlighter for every buffer that server attaches to.
+
+3. If using neovim nightly (9.0), disable the built-in semantic highlighter for
+   those buffers.
+
+The tokens found by `semanticist` are not shown by the excellent `:Inspect`
+command added to neovim 9. Instead, you can print them using:
+``` lua
+    require('semanticist').inspect()
+```
+
+
+### An example of use semanticist with clangd:
 
 Here are the types of semantic tokens sent by clangd:
 
@@ -80,17 +99,7 @@ local clangd_cb = function(bufnr, ns, token)
 end
 ```
 
-Then, I need to:
-
-1. Register a handler for `workspace/semanticTokens/refresh` for a server I
-   want to customize.
-
-2. Start a `sematicist` highlighter for every buffer that server attaches to.
-
-3. If using neovim nightly (9.0), disable the built-in semantic highlighter for
-   those buffers.
-
-With lspconfig, that looks like:
+Then, to configure With lspconfig:
 ``` lua
 require('lspconfig')['clangd'].setup{
   handlers = {
