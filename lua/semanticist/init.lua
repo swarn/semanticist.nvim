@@ -106,7 +106,9 @@ end
 
 function M.setup()
   -- override the on_win decorator function in the semantic tokens built-in module
-  semantic_tokens.__STHighlighter.on_win = on_win
+  if semantic_tokens.__STHighlighter then
+    semantic_tokens.__STHighlighter.on_win = on_win
+  end
 end
 
 return M
