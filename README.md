@@ -1,5 +1,15 @@
 # Semanticist.nvim
 
+## NO LONGER REQUIRED
+
+Just a note for the handful of people who used this: you don't need it after
+2023-03-06, when [this PR](https://github.com/neovim/neovim/pull/22022) was
+merged into neovim nightly. See:
+
+- `:h lsp-semantic-highlight`
+- `:h LspTokenUpdate`
+
+
 Control how neovim uses LSP semantic tokens to apply highlights. Requires
 neovim nightly.
 
